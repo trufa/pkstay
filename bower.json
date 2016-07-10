@@ -12,6 +12,7 @@
   "dependencies": {
     "crafty": "^0.7.1",
     "normalize-css": "^4.2.0",
-    "socket.io-client": "^1.4.8"
+    "socket.io-client": "^1.4.8",
+    "node-uuid": "^1.4.7"
   }
 }
