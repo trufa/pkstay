@@ -1,0 +1,17 @@
+{
+  "name": "pkstay-client",
+  "homepage": "https://github.com/trufa/pkstay",
+  "authors": [
+    "Trufa"
+  ],
+  "description": "Client side of pkstay game dependencies",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "crafty": "^0.7.1",
+    "normalize-css": "^4.2.0",
+    "socket.io-client": "^1.4.8"
+  }
+}
