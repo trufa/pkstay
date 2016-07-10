@@ -1,3 +1,4 @@
+var socket = io.connect('http://localhost:3000');
 var s = {
     char: {
         w: 20,
@@ -13,6 +14,7 @@ var s = {
     game: {
         radius: 80
     },
+    uuid: uuid.v4(),
     debug: false
 };
 
@@ -72,7 +74,12 @@ var char = Crafty.e('2D, DOM, Color, Fourway, Solid')
     .color('#F00')
     .fourway(s.char.speed)
     .bind("Move", function(direction) {
-        revealedDistance.text(getRevealedDistance());
+        //revealedDistance.text(getRevealedDistance());
+        socket.emit('position', {
+            uuid: s.uuid,
+            x: 5,
+            y: 10
+        });
     })
     .extend({
         toggle: function() {
@@ -102,3 +109,18 @@ var goal = Crafty.e('2D, DOM, Color, Collision')
             this.attr(getRandomPosition());
         }
     });
+
+
+
+socket.on('connect', function () {
+    socket.emit('join', {
+        uuid: s.uuid
+    });
+});
+
+socket.on('distance', function (data) {
+    console.log(data);
+    console.log(".......");
+});
+
+
