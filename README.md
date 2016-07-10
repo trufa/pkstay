@@ -9,5 +9,6 @@ Move around, found the secret position, keep finding them as fast as you can!
 # Build
 
 npm install
-bower install
 npm start
+
+go to http://localhost:3000
