@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('pkstay:server');
 var http = require('http');
 
+
 /**
  * Get port from environment and store in Express.
  */
@@ -30,23 +31,8 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 
-var io = require('socket.io')(server);
-
-var clients = [];
-
-io.on('connection', function (socket) {
-  socket.on('join', function (data) {
-    socket.join(data.uuid);
-    clients.push(data.uuid);
-    console.log("Join socket to uuid:", data.uuid);
-  });
-
-  socket.on('position', function (data) {
-    //calculate distance
-    io.sockets.in(data.uuid).emit('distance', {msg: data.uuid});
-  });
-
-});
+var io = app.io;
+io.attach(server);
 
 /**
  * Normalize a port into a number, string, or false.

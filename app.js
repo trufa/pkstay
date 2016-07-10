@@ -1,4 +1,5 @@
 var express = require('express');
+var socket_io = require('socket.io');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -9,6 +10,9 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+var io = socket_io();
+app.io = io;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,6 +59,22 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: {}
   });
+});
+
+var clients = [];
+
+io.on('connection', function (socket) {
+  socket.on('join', function (data) {
+    socket.join(data.uuid);
+    clients.push(data.uuid);
+    console.log("Join socket to uuid:", data.uuid);
+  });
+
+  socket.on('position', function (data) {
+    //calculate distance
+    io.sockets.in(data.uuid).emit('distance', {msg: data.uuid});
+  });
+
 });
 
 
