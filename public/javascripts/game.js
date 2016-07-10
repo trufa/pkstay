@@ -74,7 +74,7 @@ var char = Crafty.e('2D, DOM, Color, Fourway, Solid')
     .color('#F00')
     .fourway(s.char.speed)
     .bind("Move", function(direction) {
-        //revealedDistance.text(getRevealedDistance());
+        revealedDistance.text(getRevealedDistance());
         socket.emit('position', {
             uuid: s.uuid,
             x: 5,
