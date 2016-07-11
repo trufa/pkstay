@@ -9,10 +9,17 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var redis = require('redis');
+var client = redis.createClient(); //creates a new client
+
 var app = express();
 
 var io = socket_io();
 app.io = io;
+
+client.on('connect', function() {
+  console.log('connected');
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -61,21 +68,55 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var clients = [];
+//TODO: game logic should ge on separate file
+
+/**
+ * Game settings
+ */
+var GAME_RADIUS = 80;
+var MINIMUM_FOUND_DISTANCE = 20;
+
+var randomCoords = function(windowProps) {
+  var randX = Math.floor(Math.random() * Math.floor(windowProps.windowWidth)) + 1;
+  var randY = Math.floor(Math.random() * Math.floor(windowProps.windowHeight)) + 1;
+  return {
+    x: randX,
+    y: randY
+  }
+};
 
 io.on('connection', function (socket) {
   socket.on('join', function (data) {
+    console.log("Join socket for uuid:", data.uuid);
     socket.join(data.uuid);
-    clients.push(data.uuid);
-    console.log("Join socket to uuid:", data.uuid);
+    var windowProps = data.windowProps;
+    client.hmset(data.uuid, [
+      "goalCoords", JSON.stringify(randomCoords(windowProps)),
+      "windowProps", JSON.stringify(windowProps)
+    ], redis.print);
   });
 
   socket.on('position', function (data) {
-    //calculate distance
-    io.sockets.in(data.uuid).emit('distance', {msg: data.uuid});
+    client.hgetall(data.uuid, function(err, reply) {
+      // reply is null when the key is missing
+      console.log("Server respond with coordinates:", reply);
+      var goalCoords = JSON.parse(reply.goalCoords);
+      var distance = Math.sqrt(parseFloat(
+          (data.x - goalCoords.x) * (data.x - goalCoords.x) +
+          (data.y - goalCoords.y) * (data.y - goalCoords.y)));
+      if (distance > MINIMUM_FOUND_DISTANCE) {
+        io.sockets.in(data.uuid).emit('distance', parseInt(distance / GAME_RADIUS));
+      } else {
+        var rc = randomCoords(JSON.parse(reply.windowProps));
+        client.hmset(data.uuid, [
+          "goalCoords", JSON.stringify(rc)
+        ], function() {
+          io.sockets.in(data.uuid).emit('foundGoal');
+        });
+      }
+    });
   });
 
 });
-
 
 module.exports = app;
