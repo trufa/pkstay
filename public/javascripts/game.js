@@ -34,10 +34,11 @@ var foundGoalText = Crafty.e("2D, DOM, Text")
         }
     });
 
-var char = Crafty.e('2D, DOM, Color, Fourway, Solid')
+var char = Crafty.e('2D, DOM, Color, Fourway, Draggable, Solid')
     .attr({x: s.char.startX, y: s.char.startY, w: s.char.w, h: s.char.h})
     .color('#F00')
     .fourway(s.char.speed)
+    .enableDrag()
     .bind("Move", function(direction) {
         socket.emit('position', {
             uuid: s.uuid,
