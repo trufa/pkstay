@@ -1,0 +1,10 @@
+#lines {
+    background-size: 80px 80px;
+    background-image: repeating-linear-gradient(0deg, #3C3131, #3C3131 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #3C3131, #3C3131 1px, transparent 1px, transparent 40px);
+    height: 100%;
+    width: 100%;
+    opacity: 0.14;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
