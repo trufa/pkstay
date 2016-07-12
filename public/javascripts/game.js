@@ -6,7 +6,7 @@ var s = {
         h: 20,
         startX: 50,
         startY: 50,
-        speed: 200
+        speed: ((window.innerHeight +  window.innerWidth) *250)/1195
     },
     uuid: uuid.v4(),
     debug: false
